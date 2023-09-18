@@ -14,7 +14,7 @@ class WorkspaceController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Workspace');
+        return Inertia::render('Workspace', ['workspaces' => Workspace::all()]);
     }
 
     /**

@@ -4,7 +4,7 @@ import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, useForm } from "@inertiajs/react";
 
-export default function Workspace({ auth }) {
+export default function Workspace({ auth, workspaces }) {
     const { data, setData, post, processing, reset, errors } = useForm({
         title: "",
     });
@@ -51,6 +51,14 @@ export default function Workspace({ auth }) {
                                     Create Workspace
                                 </PrimaryButton>
                             </form>
+                            <div className="mt-4">
+                                {workspaces.map((workspace) => (
+                                    <>
+                                        {workspace.title}
+                                        <br />
+                                    </>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
