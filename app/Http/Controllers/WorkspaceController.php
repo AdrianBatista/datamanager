@@ -14,7 +14,7 @@ class WorkspaceController extends Controller
      */
     public function index()
     {
-        $workspaces = user()->company()->with(['workspaces'])->first()->workspaces;
+        $workspaces = user()->company()->with(['workspaces' => fn ($q) => $q->latest()])->first()->workspaces;
         return Inertia::render('Workspaces/Index', compact('workspaces'));
     }
 
@@ -37,8 +37,8 @@ class WorkspaceController extends Controller
 
         Workspace::create([
             ...$validated,
-            'author_id' => auth()->id(),
-            'company_id' => auth()->user()->company->id
+            'author_id' => user()->id,
+            'company_id' => user()->company->id
         ]);
 
         return redirect(route('workspaces.index'));
