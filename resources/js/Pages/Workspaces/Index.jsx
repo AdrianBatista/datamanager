@@ -64,7 +64,10 @@ export default function Workspaces({ auth, workspaces }) {
                                     <Item
                                         key={workspace.id}
                                         text={workspace.title}
-                                        url={"workspaces/" + workspace.id}
+                                        url={route(
+                                            "workspaces.datas.index",
+                                            workspace.id
+                                        )}
                                     />
                                 ))}
                             </div>
