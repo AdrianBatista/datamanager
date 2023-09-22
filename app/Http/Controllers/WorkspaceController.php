@@ -34,7 +34,11 @@ class WorkspaceController extends Controller
             'title' => 'required|string|max:255',
         ]);
 
-        Workspace::create($validated);
+        Workspace::create([
+            ...$validated,
+            'author_id' => auth()->id(),
+            'company_id' => auth()->user()->company->id
+        ]);
 
         return redirect(route('workspaces.index'));
     }
