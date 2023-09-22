@@ -15,7 +15,7 @@ class WorkspaceController extends Controller
     public function index()
     {
         $workspaces = user()->company()->with(['workspaces'])->first()->workspaces;
-        return Inertia::render('Workspace', compact('workspaces'));
+        return Inertia::render('Workspaces/Index', compact('workspaces'));
     }
 
     /**
