@@ -47,25 +47,28 @@ class DataController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Data $data)
+    public function show(Workspace $workspace, Data $data)
     {
-        //
+        return Inertia::render('Workspaces/Datas/Show', ['dataModel' => $data, 'workspace' => $workspace]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Data $data)
+    public function edit(Workspace $workspace, Data $data)
     {
-        //
+        return Inertia::render('Workspaces/Datas/Edit', ['dataModel' => $data, 'workspace' => $workspace]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Data $data)
+    public function update(Request $request, Workspace $workspace, Data $data)
     {
-        //
+        $structure = json_encode($request->get('structure'));
+        $data->structure = $structure;
+        $data->update();
+        return Inertia::render('Workspaces/Datas/Edit', ['dataModel' => $data, 'workspace' => $workspace]);
     }
 
     /**

@@ -39,7 +39,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('workspaces', WorkspaceController::class)->only(['index', 'store']);
-    Route::resource('workspaces.datas', DataController::class)->only(['index', 'store', 'show']);
+    Route::resource('workspaces.datas', DataController::class)->only(['index', 'store', 'show', 'edit', 'update']);
 });
 
 
