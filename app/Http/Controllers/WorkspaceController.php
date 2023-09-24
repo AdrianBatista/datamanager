@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Workspace;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -29,7 +28,7 @@ class WorkspaceController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -40,8 +39,6 @@ class WorkspaceController extends Controller
             'author_id' => user()->id,
             'company_id' => user()->company->id
         ]);
-
-        return redirect(route('workspaces.index'));
     }
 
     /**

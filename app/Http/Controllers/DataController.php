@@ -40,8 +40,6 @@ class DataController extends Controller
             'workspace_id' => $workspace->id,
             'author_id' => user()->id,
         ]);
-
-        return redirect(route('workspaces.datas.index', $workspace->id));
     }
 
     /**
@@ -68,7 +66,6 @@ class DataController extends Controller
         $structure = json_encode($request->get('structure'));
         $data->structure = $structure;
         $data->update();
-        return Inertia::render('Workspaces/Datas/Edit', ['dataModel' => $data, 'workspace' => $workspace]);
     }
 
     /**
