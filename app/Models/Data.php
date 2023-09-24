@@ -16,4 +16,11 @@ class Data extends Model
     {
         return $this->belongsTo(Workspace::class);
     }
+
+    public function getStructureAttribute($value)
+    {
+        $pattern = '/null/';
+        $replacement = "\"\"";
+        return preg_replace($pattern, $replacement, $value);
+    }
 }
