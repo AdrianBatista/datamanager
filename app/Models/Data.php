@@ -21,6 +21,7 @@ class Data extends Model
     {
         $pattern = '/null/';
         $replacement = "\"\"";
-        return preg_replace($pattern, $replacement, $value);
+        $newValue = preg_replace($pattern, $replacement, $value);
+        return $newValue !== "" ? $newValue : "{}";
     }
 }
