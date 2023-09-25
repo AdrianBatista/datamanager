@@ -1,3 +1,8 @@
+# About
+
+This project aims to improve the way companies handle their data. With this application, it is possible to gather all your data in a single place and use it to create dynamic files. All data can be stored locally or on the client's servers for protection.
+
+
 # Dependencies
 
 Make sure you have the following programs installed in your computer to run this code:
