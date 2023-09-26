@@ -2,6 +2,7 @@ import { Fragment, useEffect, useState } from "react";
 import InputLabel from "./InputLabel";
 import TextInput from "./TextInput";
 import AddSection from "./AddSection";
+import DeleteSection from "./DeleteSection";
 
 export default function DisplayJSON({ structure, readOnly = false, setData }) {
     const [localStructure, setStructure] = useState(structure);
@@ -31,8 +32,28 @@ function display(data, setStructure, readOnly, parent = null) {
             switch (typeof value) {
                 case "string":
                     return (
-                        <div key={key} className={index > 0 ? "mt-3" : ""}>
-                            <InputLabel htmlFor={key} value={key} />
+                        <div key={key} className={index > 0 ? "mt-6" : ""}>
+                            <div className="flex justify-between items-end">
+                                <InputLabel htmlFor={key} value={key} />
+                                <div className="flex">
+                                    {readOnly === false && (
+                                        <>
+                                            <AddSection
+                                                data={data}
+                                                setStructure={setStructure}
+                                                field={key}
+                                                readOnly={readOnly}
+                                            />
+                                            <DeleteSection
+                                                data={data}
+                                                setStructure={setStructure}
+                                                field={key}
+                                                readOnly={readOnly}
+                                            />
+                                        </>
+                                    )}
+                                </div>
+                            </div>
 
                             <TextInput
                                 type="text"
@@ -50,15 +71,6 @@ function display(data, setStructure, readOnly, parent = null) {
                                               }))
                                 }
                             />
-
-                            {readOnly === false && (
-                                <AddSection
-                                    data={data}
-                                    setStructure={setStructure}
-                                    field={key}
-                                    readOnly={readOnly}
-                                />
-                            )}
                         </div>
                     );
 
@@ -70,7 +82,27 @@ function display(data, setStructure, readOnly, parent = null) {
                                     index > 0 ? "mt-5" : ""
                                 } shadow p-4`}
                             >
-                                {key}
+                                <div className="flex justify-between items-end">
+                                    {key}
+                                    <div className="flex">
+                                        {readOnly === false && (
+                                            <>
+                                                <AddSection
+                                                    data={data}
+                                                    setStructure={setStructure}
+                                                    field={key}
+                                                    readOnly={readOnly}
+                                                />
+                                                <DeleteSection
+                                                    data={data}
+                                                    setStructure={setStructure}
+                                                    field={key}
+                                                    readOnly={readOnly}
+                                                />
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
                                 <div className="mt-3">
                                     {display(
                                         value,
@@ -80,21 +112,13 @@ function display(data, setStructure, readOnly, parent = null) {
                                     )}
                                 </div>
                             </div>
-                            {readOnly === false && (
-                                <AddSection
-                                    data={data}
-                                    setStructure={setStructure}
-                                    field={key}
-                                    readOnly={readOnly}
-                                />
-                            )}
                         </Fragment>
                     );
             }
         })
     ) : (
-        <>
-            There is no data here yet!
+        <div className="flex items-center">
+            <span className="me-2">There is no data here yet!</span>
             {readOnly === false && (
                 <AddSection
                     data={data}
@@ -103,6 +127,6 @@ function display(data, setStructure, readOnly, parent = null) {
                     readOnly={readOnly}
                 />
             )}
-        </>
+        </div>
     );
 }

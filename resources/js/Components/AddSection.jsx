@@ -38,7 +38,7 @@ export default function AddSection({ data, setStructure, readOnly, field }) {
     return (
         <>
             <button
-                className="w-full flex justify-items-center justify-center bg-slate-50 hover:bg-slate-400 p-2 cursor-pointer rounded mt-1"
+                className="inline-flex justify-items-center justify-center hover:bg-slate-400 cursor-pointer rounded p-1"
                 onClick={handleClick}
             >
                 <svg
