@@ -17,7 +17,6 @@ export default function DeleteSection({ data, setStructure, readOnly, field }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("delete");
         const entries = Object.entries(data ?? {});
         const index = entries.findIndex((entry) =>
             field ? entry[0] == field : 0
