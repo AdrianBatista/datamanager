@@ -4,6 +4,8 @@ import TextInput from "./TextInput";
 import AddSection from "./AddSection";
 import DeleteSection from "./DeleteSection";
 import EditSection from "./EditSection";
+import MoveUpSection from "./MoveUpSection";
+import MoveDownSection from "./MoveDownSection";
 
 export default function DisplayJSON({ structure, readOnly = false, setData }) {
     const [localStructure, setStructure] = useState(structure);
@@ -31,6 +33,18 @@ function actionsBar(data, setStructure, field, readOnly) {
     return (
         <>
             <AddSection
+                data={data}
+                setStructure={setStructure}
+                field={field}
+                readOnly={readOnly}
+            />
+            <MoveUpSection
+                data={data}
+                setStructure={setStructure}
+                field={field}
+                readOnly={readOnly}
+            />
+            <MoveDownSection
                 data={data}
                 setStructure={setStructure}
                 field={field}
