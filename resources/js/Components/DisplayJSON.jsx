@@ -3,6 +3,7 @@ import InputLabel from "./InputLabel";
 import TextInput from "./TextInput";
 import AddSection from "./AddSection";
 import DeleteSection from "./DeleteSection";
+import EditSection from "./EditSection";
 
 export default function DisplayJSON({ structure, readOnly = false, setData }) {
     const [localStructure, setStructure] = useState(structure);
@@ -26,6 +27,31 @@ function createSetter(setter, field) {
     };
 }
 
+function actionsBar(data, setStructure, field, readOnly) {
+    return (
+        <>
+            <AddSection
+                data={data}
+                setStructure={setStructure}
+                field={field}
+                readOnly={readOnly}
+            />
+            <EditSection
+                data={data}
+                setStructure={setStructure}
+                field={field}
+                readOnly={readOnly}
+            />
+            <DeleteSection
+                data={data}
+                setStructure={setStructure}
+                field={field}
+                readOnly={readOnly}
+            />
+        </>
+    );
+}
+
 function display(data, setStructure, readOnly, parent = null) {
     return data && Object.keys(data).length ? (
         Object.entries(data).map(([key, value], index) => {
@@ -36,22 +62,13 @@ function display(data, setStructure, readOnly, parent = null) {
                             <div className="flex justify-between items-end">
                                 <InputLabel htmlFor={key} value={key} />
                                 <div className="flex">
-                                    {readOnly === false && (
-                                        <>
-                                            <AddSection
-                                                data={data}
-                                                setStructure={setStructure}
-                                                field={key}
-                                                readOnly={readOnly}
-                                            />
-                                            <DeleteSection
-                                                data={data}
-                                                setStructure={setStructure}
-                                                field={key}
-                                                readOnly={readOnly}
-                                            />
-                                        </>
-                                    )}
+                                    {readOnly === false &&
+                                        actionsBar(
+                                            data,
+                                            setStructure,
+                                            key,
+                                            readOnly
+                                        )}
                                 </div>
                             </div>
 
@@ -85,22 +102,13 @@ function display(data, setStructure, readOnly, parent = null) {
                                 <div className="flex justify-between items-end">
                                     {key}
                                     <div className="flex">
-                                        {readOnly === false && (
-                                            <>
-                                                <AddSection
-                                                    data={data}
-                                                    setStructure={setStructure}
-                                                    field={key}
-                                                    readOnly={readOnly}
-                                                />
-                                                <DeleteSection
-                                                    data={data}
-                                                    setStructure={setStructure}
-                                                    field={key}
-                                                    readOnly={readOnly}
-                                                />
-                                            </>
-                                        )}
+                                        {readOnly === false &&
+                                            actionsBar(
+                                                data,
+                                                setStructure,
+                                                key,
+                                                readOnly
+                                            )}
                                     </div>
                                 </div>
                                 <div className="mt-3">
