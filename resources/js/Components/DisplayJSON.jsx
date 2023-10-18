@@ -6,6 +6,8 @@ import DeleteSection from "./DeleteSection";
 import EditSection from "./EditSection";
 import MoveUpSection from "./MoveUpSection";
 import MoveDownSection from "./MoveDownSection";
+import { getFieldType } from "@/Helpers/DataManipulation";
+import { TableSection } from "./TableSection";
 
 export default function DisplayJSON({ structure, readOnly = false, setData }) {
     const [localStructure, setStructure] = useState(structure);
@@ -69,8 +71,8 @@ function actionsBar(data, setStructure, field, readOnly) {
 function display(data, setStructure, readOnly, parent = null) {
     return data && Object.keys(data).length ? (
         Object.entries(data).map(([key, value], index) => {
-            switch (typeof value) {
-                case "string":
+            switch (getFieldType(value)) {
+                case "Text":
                     return (
                         <div key={key} className={index > 0 ? "mt-6" : ""}>
                             <div className="flex justify-between items-end">
@@ -105,7 +107,41 @@ function display(data, setStructure, readOnly, parent = null) {
                         </div>
                     );
 
-                case "object":
+                case "Table":
+                    return (
+                        <Fragment key={key}>
+                            <div
+                                className={`${
+                                    index > 0 ? "mt-5" : ""
+                                } shadow p-4`}
+                            >
+                                <div className="flex justify-between items-end">
+                                    {key}
+                                    <div className="flex">
+                                        {readOnly === false &&
+                                            actionsBar(
+                                                data,
+                                                setStructure,
+                                                key,
+                                                readOnly
+                                            )}
+                                    </div>
+                                </div>
+                                <div className="mt-3">
+                                    <TableSection
+                                        table={value}
+                                        setTable={createSetter(
+                                            setStructure,
+                                            key
+                                        )}
+                                        readOnly={readOnly}
+                                    />
+                                </div>
+                            </div>
+                        </Fragment>
+                    );
+
+                case "Section":
                     return (
                         <Fragment key={key}>
                             <div
@@ -140,14 +176,26 @@ function display(data, setStructure, readOnly, parent = null) {
         })
     ) : (
         <div className="flex items-center">
-            <span className="me-2">There is no data here yet!</span>
-            {readOnly === false && (
-                <AddSection
-                    data={data}
-                    setStructure={setStructure}
-                    field={parent}
-                    readOnly={readOnly}
-                />
+            {getFieldType(data) === "Section" ? (
+                <>
+                    <span className="me-2">There is no data here yet!</span>
+                    {readOnly === false && (
+                        <AddSection
+                            data={data}
+                            setStructure={setStructure}
+                            field={parent}
+                            readOnly={readOnly}
+                        />
+                    )}
+                </>
+            ) : (
+                <div className="w-full me-2">
+                    <TableSection
+                        table={data}
+                        setTable={setStructure}
+                        readOnly={readOnly}
+                    />
+                </div>
             )}
         </div>
     );

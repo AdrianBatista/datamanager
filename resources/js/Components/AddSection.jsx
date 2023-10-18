@@ -25,9 +25,23 @@ export default function AddSection({ data, setStructure, readOnly, field }) {
         const index = entries.findIndex((entry) =>
             field ? entry[0] == field : 0
         );
+        let defaultValue = "";
+        switch (fieldType) {
+            case "Text":
+                defaultValue = "";
+                break;
+
+            case "Section":
+                defaultValue = {};
+                break;
+
+            case "Table":
+                defaultValue = [];
+                break;
+        }
         const newEntries = [
             ...entries.slice(0, index + 1),
-            [newField, fieldType == "Text" ? "" : {}],
+            [newField, defaultValue],
             ...entries.slice(index + 1),
         ];
         setStructure(Object.fromEntries(newEntries));
@@ -79,6 +93,7 @@ export default function AddSection({ data, setStructure, readOnly, field }) {
                         >
                             <option>Text</option>
                             <option>Section</option>
+                            <option>Table</option>
                         </select>
                     </div>
                     <div className="mt-6 flex justify-end">

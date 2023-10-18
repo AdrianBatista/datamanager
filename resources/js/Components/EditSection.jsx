@@ -4,15 +4,7 @@ import InputLabel from "./InputLabel";
 import TextInput from "./TextInput";
 import SecondaryButton from "./SecondaryButton";
 import DangerButton from "./DangerButton";
-
-function getFieldType(fieldValue) {
-    switch (typeof fieldValue) {
-        case "string":
-            return "Text";
-        case "object":
-            return "Section";
-    }
-}
+import { getFieldType } from "@/Helpers/DataManipulation";
 
 export default function EditSection({ data, setStructure, readOnly, field }) {
     const [showModal, setShowModal] = useState(false);
@@ -89,6 +81,7 @@ export default function EditSection({ data, setStructure, readOnly, field }) {
                         >
                             <option>Text</option>
                             <option>Section</option>
+                            <option>Table</option>
                         </select>
                     </div>
                     <div className="mt-6 flex justify-end">
