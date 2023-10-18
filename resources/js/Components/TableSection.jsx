@@ -23,6 +23,41 @@ export function TableSection({ table, setTable, readOnly }) {
         }
     };
 
+    const handlePaste = (e) => {
+        if (!readOnly) {
+            e.preventDefault();
+            const clipboardData = e.clipboardData;
+            const pastedData = clipboardData.getData("Text");
+
+            if (/\r\n/g.test(pastedData)) {
+                const rows = pastedData.split("\r\n");
+                rows.pop();
+
+                const pastedTable = rows.map((row) => row.split("\t"));
+                const rowsSize = rows.length;
+                const columnSize = pastedTable[0].length;
+                const tableRowsSize = table.length - 1;
+                const tableColumnSize = Object.keys(table[0]).length;
+
+                if (
+                    rowsSize === tableRowsSize &&
+                    columnSize === tableColumnSize
+                ) {
+                    const newTable = [...table];
+                    const keys = Object.keys(table[0]);
+
+                    for (let row = 0; row < rowsSize; row++) {
+                        keys.forEach((key, column) => {
+                            newTable[row + 1][key] = pastedTable[row][column];
+                        });
+                    }
+
+                    setTable(newTable);
+                }
+            }
+        }
+    };
+
     const handleChange = (e, row, column) => {
         const key = Object.keys(table[row])[column];
         const newTable = [...table];
@@ -50,6 +85,7 @@ export function TableSection({ table, setTable, readOnly }) {
             <div
                 className="w-full overflow-x-auto"
                 onContextMenu={handleContext}
+                onPaste={handlePaste}
             >
                 {table.length ? (
                     <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
