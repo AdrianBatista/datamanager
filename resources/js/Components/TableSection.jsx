@@ -3,10 +3,14 @@ import TextInput from "./TextInput";
 import AddTableColumn from "./AddTableColumn";
 import Modal from "./Modal";
 import AddTableRow from "./AddTableRow";
+import DeleteTableRow from "./DeleteTableRow";
+import DeleteTableColumn from "./DeleteTableColumn";
 
 export function TableSection({ table, setTable, readOnly }) {
     const [openColumnModal, setOpenColumnModal] = useState(false);
+    const [openDeleteColumnModal, setOpenDeleteColumnModal] = useState(false);
     const [openRowModal, setOpenRowModal] = useState(false);
+    const [openDeleteRowModal, setOpenDeleteRowModal] = useState(false);
     const [displayContextMenu, setDisplayContextMenu] = useState(false);
     const [selection, setSelection] = useState({
         row: null,
@@ -101,6 +105,14 @@ export function TableSection({ table, setTable, readOnly }) {
             before: mode === "before" ? true : false,
         }));
         setOpenRowModal(true);
+    };
+
+    const deleteColumn = () => {
+        setOpenDeleteColumnModal(true);
+    };
+
+    const deleteRow = () => {
+        setOpenDeleteRowModal(true);
     };
 
     useEffect(() => {
@@ -209,6 +221,14 @@ export function TableSection({ table, setTable, readOnly }) {
                         >
                             Add Column After
                         </button>
+                        {selection.column !== null && (
+                            <button
+                                className="inline-flex justify-items-center pl-2 hover:bg-slate-100 cursor-pointer rounded p-1"
+                                onClick={() => deleteColumn()}
+                            >
+                                Delete Column
+                            </button>
+                        )}
                         {table.length > 0 && (
                             <>
                                 <button
@@ -225,6 +245,14 @@ export function TableSection({ table, setTable, readOnly }) {
                                 </button>
                             </>
                         )}
+                        {selection.row !== null && (
+                            <button
+                                className="inline-flex justify-items-center pl-2 hover:bg-slate-100 cursor-pointer rounded p-1"
+                                onClick={() => deleteRow()}
+                            >
+                                Delete Row
+                            </button>
+                        )}
                     </div>
                 </div>
             )}
@@ -237,6 +265,14 @@ export function TableSection({ table, setTable, readOnly }) {
                     before={selection.before}
                 />
             </Modal>
+            <Modal show={openDeleteColumnModal}>
+                <DeleteTableColumn
+                    table={table}
+                    setTable={setTable}
+                    setShowModal={setOpenDeleteColumnModal}
+                    selectedColumn={selection.column}
+                />
+            </Modal>
             <Modal show={openRowModal}>
                 <AddTableRow
                     table={table}
@@ -244,6 +280,14 @@ export function TableSection({ table, setTable, readOnly }) {
                     setShowModal={setOpenRowModal}
                     selectedRow={selection.row}
                     before={selection.before}
+                />
+            </Modal>
+            <Modal show={openDeleteRowModal}>
+                <DeleteTableRow
+                    table={table}
+                    setTable={setTable}
+                    setShowModal={setOpenDeleteRowModal}
+                    selectedRow={selection.row}
                 />
             </Modal>
         </div>
