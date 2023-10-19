@@ -8,6 +8,11 @@ export function TableSection({ table, setTable, readOnly }) {
     const [openColumnModal, setOpenColumnModal] = useState(false);
     const [openRowModal, setOpenRowModal] = useState(false);
     const [displayContextMenu, setDisplayContextMenu] = useState(false);
+    const [selection, setSelection] = useState({
+        row: null,
+        column: null,
+        before: false,
+    });
     const [contextMenuPosition, setContextMenuPosiiton] = useState({
         x: 0,
         y: 0,
@@ -61,15 +66,40 @@ export function TableSection({ table, setTable, readOnly }) {
     const handleChange = (e, row, column) => {
         const key = Object.keys(table[row])[column];
         const newTable = [...table];
-        newTable[row][key] = e.target.value;
+        newTable[row] = {
+            ...table[row],
+            [key]: e.target.value,
+        };
         setTable(newTable);
     };
 
-    const addColumn = () => {
+    const handleColumnClick = (column) => {
+        setSelection({
+            row: null,
+            column,
+        });
+    };
+
+    const handleRowClick = (row) => {
+        setSelection({
+            row,
+            column: null,
+        });
+    };
+
+    const addColumn = (mode) => {
+        setSelection((old) => ({
+            ...old,
+            before: mode === "before" ? true : false,
+        }));
         setOpenColumnModal(true);
     };
 
-    const addRow = () => {
+    const addRow = (mode) => {
+        setSelection((old) => ({
+            ...old,
+            before: mode === "before" ? true : false,
+        }));
         setOpenRowModal(true);
     };
 
@@ -94,8 +124,15 @@ export function TableSection({ table, setTable, readOnly }) {
                                 {Object.keys(table[0]).map((header) => (
                                     <th
                                         scope="col"
-                                        className="px-6 py-3"
+                                        className={`px-6 py-3 ${
+                                            selection.column == header
+                                                ? "bg-gray-200"
+                                                : ""
+                                        }`}
                                         key={header}
+                                        onClick={() =>
+                                            handleColumnClick(header)
+                                        }
                                     >
                                         {header}
                                     </th>
@@ -107,27 +144,39 @@ export function TableSection({ table, setTable, readOnly }) {
                                 <tr
                                     className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
                                     key={i}
+                                    onClick={() => handleRowClick(i)}
                                 >
-                                    {Object.values(row).map((data, j) => (
-                                        <td className="px-6 py-4" key={j}>
-                                            {readOnly ? (
-                                                data
-                                            ) : (
-                                                <TextInput
-                                                    type="text"
-                                                    className="block w-full m-0"
-                                                    value={data ?? ""}
-                                                    onChange={(e) =>
-                                                        handleChange(
-                                                            e,
-                                                            i + 1,
-                                                            j
-                                                        )
-                                                    }
-                                                />
-                                            )}
-                                        </td>
-                                    ))}
+                                    {Object.entries(row).map(
+                                        ([header, data], j) => (
+                                            <td
+                                                className={`px-6 py-4 ${
+                                                    selection.column ==
+                                                        header ||
+                                                    selection.row == i
+                                                        ? "bg-gray-100"
+                                                        : ""
+                                                }`}
+                                                key={j}
+                                            >
+                                                {readOnly ? (
+                                                    data
+                                                ) : (
+                                                    <TextInput
+                                                        type="text"
+                                                        className="block w-full m-0"
+                                                        value={data ?? ""}
+                                                        onChange={(e) =>
+                                                            handleChange(
+                                                                e,
+                                                                i + 1,
+                                                                j
+                                                            )
+                                                        }
+                                                    />
+                                                )}
+                                            </td>
+                                        )
+                                    )}
                                 </tr>
                             ))}
                         </tbody>
@@ -150,17 +199,31 @@ export function TableSection({ table, setTable, readOnly }) {
                     <div className="bg-white w-60 border border-gray-300 rounded-lg flex flex-col text-sm py-4 px-2 text-gray-500 shadow-lg">
                         <button
                             className="inline-flex justify-items-center pl-2 hover:bg-slate-100 cursor-pointer rounded p-1"
-                            onClick={addColumn}
+                            onClick={() => addColumn("before")}
                         >
-                            Add Column
+                            Add Column Before
+                        </button>
+                        <button
+                            className="inline-flex justify-items-center pl-2 hover:bg-slate-100 cursor-pointer rounded p-1"
+                            onClick={() => addColumn("after")}
+                        >
+                            Add Column After
                         </button>
                         {table.length > 0 && (
-                            <button
-                                className="inline-flex justify-items-center pl-2 hover:bg-slate-100 cursor-pointer rounded p-1"
-                                onClick={addRow}
-                            >
-                                Add Row
-                            </button>
+                            <>
+                                <button
+                                    className="inline-flex justify-items-center pl-2 hover:bg-slate-100 cursor-pointer rounded p-1"
+                                    onClick={() => addRow("before")}
+                                >
+                                    Add Row Before
+                                </button>
+                                <button
+                                    className="inline-flex justify-items-center pl-2 hover:bg-slate-100 cursor-pointer rounded p-1"
+                                    onClick={() => addRow("after")}
+                                >
+                                    Add Row After
+                                </button>
+                            </>
                         )}
                     </div>
                 </div>
@@ -170,6 +233,8 @@ export function TableSection({ table, setTable, readOnly }) {
                     table={table}
                     setTable={setTable}
                     setShowModal={setOpenColumnModal}
+                    selectedColumn={selection.column}
+                    before={selection.before}
                 />
             </Modal>
             <Modal show={openRowModal}>
@@ -177,6 +242,8 @@ export function TableSection({ table, setTable, readOnly }) {
                     table={table}
                     setTable={setTable}
                     setShowModal={setOpenRowModal}
+                    selectedRow={selection.row}
+                    before={selection.before}
                 />
             </Modal>
         </div>

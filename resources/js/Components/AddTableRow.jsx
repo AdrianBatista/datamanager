@@ -9,6 +9,8 @@ export default function AddTableRow({
     setTable,
     readOnly,
     setShowModal,
+    selectedRow,
+    before,
 }) {
     const [newField, setNewField] = useState("");
 
@@ -18,10 +20,24 @@ export default function AddTableRow({
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const newTable = [
-            ...table,
-            Object.fromEntries(Object.keys(table[0]).map((key) => [key, null])),
-        ];
+        let newTable = [];
+        if (selectedRow !== null) {
+            const offset = before ? 1 : 2;
+            newTable = [
+                ...table.slice(0, selectedRow + offset),
+                Object.fromEntries(
+                    Object.keys(table[0]).map((key) => [key, null])
+                ),
+                ...table.slice(selectedRow + offset),
+            ];
+        } else {
+            newTable = [
+                ...table,
+                Object.fromEntries(
+                    Object.keys(table[0]).map((key) => [key, null])
+                ),
+            ];
+        }
         setTable(newTable);
     };
 

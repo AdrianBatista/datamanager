@@ -9,6 +9,8 @@ export default function AddTableColumn({
     setTable,
     readOnly,
     setShowModal,
+    selectedColumn,
+    before,
 }) {
     const [newField, setNewField] = useState("");
 
@@ -23,10 +25,26 @@ export default function AddTableColumn({
             if (table.length == 0) {
                 newTable = [{ [newField]: null }, { [newField]: null }];
             } else {
-                newTable = table.map((row) => ({
-                    ...row,
-                    [newField]: null,
-                }));
+                if (selectedColumn) {
+                    newTable = table.map((row) => {
+                        const entries = Object.entries(row);
+                        const index = entries.findIndex((entry) =>
+                            selectedColumn ? entry[0] == selectedColumn : 0
+                        );
+                        const offset = before ? 0 : 1;
+                        const newEntries = [
+                            ...entries.slice(0, index + offset),
+                            [newField, null],
+                            ...entries.slice(index + offset),
+                        ];
+                        return Object.fromEntries(newEntries);
+                    });
+                } else {
+                    newTable = table.map((row) => ({
+                        ...row,
+                        [newField]: null,
+                    }));
+                }
             }
             setTable(newTable);
         }
