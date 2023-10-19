@@ -1,6 +1,7 @@
 import CreateDataGroup from "@/Components/CreateDataGroup";
 import InputError from "@/Components/InputError";
 import Item from "@/Components/Item";
+import LoadExcelForm from "@/Components/LoadExcelForm";
 import Modal from "@/Components/Modal";
 import PrimaryButton from "@/Components/PrimaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
@@ -9,6 +10,7 @@ import { useState } from "react";
 
 export default function Datas({ auth, workspace }) {
     const [showGroupForm, setShowGroupForm] = useState(false);
+    const [showExcelForm, setShowExcelForm] = useState(false);
 
     return (
         <AuthenticatedLayout
@@ -32,6 +34,12 @@ export default function Datas({ auth, workspace }) {
                                 >
                                     Create Group
                                 </PrimaryButton>
+                                <PrimaryButton
+                                    className="block h-full"
+                                    onClick={() => setShowExcelForm(true)}
+                                >
+                                    Load Excel
+                                </PrimaryButton>
                             </div>
                             <div className="mt-4 flex flex-col gap-1">
                                 {workspace.datas.map((data) => (
@@ -45,6 +53,17 @@ export default function Datas({ auth, workspace }) {
                                     />
                                 ))}
                             </div>
+                            {workspace.excels && (
+                                <div className="mt-4 flex flex-col gap-1">
+                                    <h3>Excels</h3>
+                                    {workspace.excels.map((excel) => (
+                                        <Item
+                                            key={excel.id}
+                                            text={excel.name}
+                                        />
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -53,6 +72,12 @@ export default function Datas({ auth, workspace }) {
                 <CreateDataGroup
                     workspace={workspace}
                     setShowModal={setShowGroupForm}
+                />
+            </Modal>
+            <Modal show={showExcelForm}>
+                <LoadExcelForm
+                    workspace={workspace}
+                    setShowModal={setShowExcelForm}
                 />
             </Modal>
         </AuthenticatedLayout>

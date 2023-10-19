@@ -14,7 +14,7 @@ class DataController extends Controller
      */
     public function index(Workspace $workspace)
     {
-        $workspace = $workspace->load(['datas' => fn ($q) => $q->latest()]);
+        $workspace = $workspace->load(['datas' => fn($q) => $q->latest(), 'excels' => fn($q) => $q->latest()]);
         return Inertia::render('Workspaces/Datas/Index', compact('workspace'));
     }
 

@@ -28,4 +28,9 @@ class Workspace extends Model
     {
         return $this->hasMany(Data::class);
     }
+
+    public function excels(): HasMany
+    {
+        return $this->hasMany(Excel::class);
+    }
 }

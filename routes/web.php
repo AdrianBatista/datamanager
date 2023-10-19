@@ -1,9 +1,9 @@
 <?php
 
 use App\Http\Controllers\DataController;
+use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WorkspaceController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -35,6 +35,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('workspaces', WorkspaceController::class)->only(['index', 'store']);
     Route::resource('workspaces.datas', DataController::class)->only(['index', 'store', 'show', 'edit', 'update']);
+    Route::resource('workspaces.excel', ExcelController::class)->only(['store']);
 });
 
 
