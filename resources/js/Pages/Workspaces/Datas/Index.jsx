@@ -60,21 +60,12 @@ export default function Datas({ auth, workspace }) {
                                         <Item
                                             key={excel.id}
                                             text={excel.name}
+                                            url={route(
+                                                "workspaces.excels.show",
+                                                [workspace.id, excel.id]
+                                            )}
                                             actions={
-                                                <button
-                                                    className="inline-flex justify-items-center justify-center hover:bg-slate-400 cursor-pointer rounded p-1"
-                                                    onClick={() =>
-                                                        router.get(
-                                                            route(
-                                                                "workspaces.excels.show",
-                                                                [
-                                                                    workspace.id,
-                                                                    excel.id,
-                                                                ]
-                                                            )
-                                                        )
-                                                    }
-                                                >
+                                                <button className="inline-flex justify-items-center justify-center hover:bg-slate-400 cursor-pointer rounded p-1">
                                                     <svg
                                                         xmlns="http://www.w3.org/2000/svg"
                                                         fill="none"

@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Excel;
 use App\Models\Workspace;
+use App\Modules\HandleExcel;
 use App\Modules\LocalStorage;
 use Illuminate\Http\Request;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class ExcelController extends Controller
 {
@@ -45,9 +47,15 @@ class ExcelController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Excel $excel)
+    public function show(Workspace $workspace, Excel $excel)
     {
-        //
+        $file = LocalStorage::loadExcelFile($excel);
+        if ($file) {
+            $fileWithData = HandleExcel::insertData($file);
+            $writer = IOFactory::createWriter($fileWithData, 'Xlsx');
+            $writer->save($path = storage_path($excel->name));
+            return response()->download($path)->deleteFileAfterSend();
+        }
     }
 
     /**
