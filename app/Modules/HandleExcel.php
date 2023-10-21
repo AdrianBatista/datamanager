@@ -2,6 +2,7 @@
 
 namespace App\Modules;
 
+use Exception;
 use App\Models\Workspace;
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
@@ -18,7 +19,7 @@ class HandleExcel
             for ($i = 1; $i <= $highestRow; $i++) {
                 for ($j = 1; $j <= $highestColumn; $j++) {
                     $cell = $sheet->getCell([$j, $i]);
-                    HandleExcel::replaceCellValue($cell, $workspace);
+                    self::replaceCellValue($cell, $workspace);
                 }
             }
         }
@@ -53,13 +54,23 @@ class HandleExcel
                 $array = $newValue;
                 unset($array[0]);
                 $array = array_values($array);
-                HandleExcel::insertTable($cell, $array);
+                self::insertTable($cell, $array);
             }
         }
     }
 
     static public function insertTable(Cell $cell, array $data): void
     {
+        $tables = $cell->getWorksheet()->getTableCollection();
+        $table = null;
+        foreach ($tables as $tableIteration) {
+            $cellBelongsToRange = self::coordinateIsInsideRange($tableIteration->getRange(), $cell->getCoordinate());
+            if ($cellBelongsToRange) {
+                $table = $tableIteration;
+                break;
+            }
+        }
+
         $rows = count($data);
         $columns = count($data[0]);
         $firstRow = $cell->getRow();
@@ -67,10 +78,44 @@ class HandleExcel
         $sheet = $cell->getWorksheet();
         for ($i = 0; $i < $rows; $i++) {
             $row = array_values($data[$i]);
+
+            if ($table) {
+                $boundaries = Coordinate::rangeBoundaries($table->getRange());
+                $rowsCount = $boundaries[1][1] - $boundaries[0][1];
+
+                if ($rowsCount === $i) {
+                    $boundaries[1][1]++;
+                    $boundaries[0][0] = Coordinate::stringFromColumnIndex($boundaries[0][0]);
+                    $boundaries[1][0] = Coordinate::stringFromColumnIndex($boundaries[1][0]);
+                    $newRange = "{$boundaries[0][0]}{$boundaries[0][1]}:{$boundaries[1][0]}{$boundaries[1][1]}";
+                    $table->setRange($newRange);
+                }
+            }
+
             for ($j = 0; $j < $columns; $j++) {
                 $currentCell = $sheet->getCell([$firstColumn + $j, $firstRow + $i]);
                 $currentCell->setValue($row[$j]);
             }
         }
+    }
+
+    static public function coordinateIsInsideRange(string $range, string $coordinate): bool
+    {
+        if (Coordinate::coordinateIsRange($range)) {
+            $boundaries = Coordinate::rangeBoundaries($range);
+
+            $coordinates = Coordinate::coordinateFromString($coordinate);
+            $coordinates[0] = Coordinate::columnIndexFromString($coordinates[0]);
+
+            $columnIsInside = $boundaries[0][0] <= $coordinates[0] && $coordinates[0] <= $boundaries[1][0];
+            if (!$columnIsInside)
+                return false;
+            $rowIsInside = $boundaries[0][1] <= $coordinates[1] && $coordinates[1] <= $boundaries[1][1];
+            if (!$rowIsInside)
+                return false;
+            return true;
+
+        }
+        throw new Exception('First argument needs to be a range');
     }
 }
