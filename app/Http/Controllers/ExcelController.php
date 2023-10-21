@@ -51,7 +51,7 @@ class ExcelController extends Controller
     {
         $file = LocalStorage::loadExcelFile($excel);
         if ($file) {
-            $fileWithData = HandleExcel::insertData($file);
+            $fileWithData = HandleExcel::insertData($file, $workspace);
             $writer = IOFactory::createWriter($fileWithData, 'Xlsx');
             $writer->save($path = storage_path($excel->name));
             return response()->download($path)->deleteFileAfterSend();
