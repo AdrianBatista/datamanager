@@ -15,7 +15,7 @@ export default function LoadExcelForm({ workspace, setShowModal }) {
 
     const submit = (e) => {
         e.preventDefault();
-        post(route("workspaces.excel.store", workspace.id), {
+        post(route("workspaces.excels.store", workspace.id), {
             onSuccess: () => reset(),
         });
         setShowModal(false);
