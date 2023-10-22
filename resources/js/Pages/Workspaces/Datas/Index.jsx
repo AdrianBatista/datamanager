@@ -41,19 +41,21 @@ export default function Datas({ auth, workspace }) {
                                     Load Excel
                                 </PrimaryButton>
                             </div>
-                            <div className="mt-4 flex flex-col gap-1">
-                                {workspace.datas.map((data) => (
-                                    <Item
-                                        key={data.id}
-                                        text={data.title}
-                                        url={route("workspaces.datas.show", [
-                                            workspace.id,
-                                            data.id,
-                                        ])}
-                                    />
-                                ))}
-                            </div>
-                            {workspace.excels && (
+                            {workspace.datas.length > 0 && (
+                                <div className="mt-4 flex flex-col gap-1">
+                                    {workspace.datas.map((data) => (
+                                        <Item
+                                            key={data.id}
+                                            text={data.title}
+                                            url={route(
+                                                "workspaces.datas.show",
+                                                [workspace.id, data.id]
+                                            )}
+                                        />
+                                    ))}
+                                </div>
+                            )}
+                            {workspace.excels?.length > 0 && (
                                 <div className="mt-4 flex flex-col gap-1">
                                     <h3>Excels</h3>
                                     {workspace.excels.map((excel) => (
