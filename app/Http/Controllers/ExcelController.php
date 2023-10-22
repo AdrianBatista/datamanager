@@ -6,6 +6,7 @@ use App\Models\Excel;
 use App\Models\Workspace;
 use App\Modules\HandleExcel;
 use App\Modules\LocalStorage;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -54,7 +55,9 @@ class ExcelController extends Controller
             $fileWithData = HandleExcel::insertData($file, $workspace);
             $writer = IOFactory::createWriter($fileWithData, 'Xlsx');
             $writer->save($path = storage_path($excel->name));
-            return response()->download($path)->deleteFileAfterSend();
+            $today = Carbon::today()->toDateString();
+            $fileName = preg_replace('/\.(.*)$/', "_{$today}.$1", $excel->name);
+            return response()->download($path, $fileName)->deleteFileAfterSend();
         }
     }
 
