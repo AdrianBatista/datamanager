@@ -4,6 +4,7 @@ namespace App\Modules;
 
 use Exception;
 use App\Models\Workspace;
+use Illuminate\Support\Collection;
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -61,6 +62,16 @@ class HandleExcel
 
     static public function insertTable(Cell $cell, array $data): void
     {
+        $worksheetTitle = $cell->getWorksheet()->getTitle();
+        $cellCoordinate = $cell->getCoordinate();
+        $namedRanges = new Collection($cell->getWorksheet()->getParent()->getNamedRanges());
+        $worksheetNamedRanges = $namedRanges->filter(fn($range) => $range->getWorksheet()->getTitle() === $worksheetTitle);
+        $namedRange = $worksheetNamedRanges->first(function ($range) use ($cellCoordinate, $worksheetTitle) {
+            $rangeFormula = str_replace($worksheetTitle . "!", "", $range->getRange());
+            $rangeFormula = str_replace("$", "", $rangeFormula);
+            return self::coordinateIsInsideRange($rangeFormula, $cellCoordinate);
+        });
+
         $tables = $cell->getWorksheet()->getTableCollection();
         $table = null;
         foreach ($tables as $tableIteration) {
@@ -78,6 +89,21 @@ class HandleExcel
         $sheet = $cell->getWorksheet();
         for ($i = 0; $i < $rows; $i++) {
             $row = array_values($data[$i]);
+
+            if ($namedRange) {
+                $rangeFormula = str_replace($worksheetTitle . "!", "", $namedRange->getRange());
+                $rangeFormula = str_replace("$", "", $rangeFormula);
+                $boundaries = Coordinate::rangeBoundaries($rangeFormula);
+                $rowsCount = $boundaries[1][1] - $boundaries[0][1] + 1;
+
+                if ($rowsCount === $i) {
+                    $boundaries[1][1]++;
+                    $boundaries[0][0] = Coordinate::stringFromColumnIndex($boundaries[0][0]);
+                    $boundaries[1][0] = Coordinate::stringFromColumnIndex($boundaries[1][0]);
+                    $newRange = "{$worksheetTitle}!\${$boundaries[0][0]}\${$boundaries[0][1]}:\${$boundaries[1][0]}\${$boundaries[1][1]}";
+                    $namedRange->setRange($newRange);
+                }
+            }
 
             if ($table) {
                 $boundaries = Coordinate::rangeBoundaries($table->getRange());
