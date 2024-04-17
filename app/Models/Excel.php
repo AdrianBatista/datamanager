@@ -20,6 +20,10 @@ class Excel extends Model
         return $matches[0];
     }
 
+    public function workspace() {
+        return $this->belongsTo(Workspace::class);
+    }
+
     public function toArray()
     {
         return array_merge(parent::toArray(), ['name' => $this->name]);
