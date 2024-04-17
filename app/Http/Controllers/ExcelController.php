@@ -39,10 +39,13 @@ class ExcelController extends Controller
 
         $fileDestiny = LocalStorage::saveExcelFile($workspace, $validated['file']);
 
-        Excel::create([
-            'workspace_id' => $workspace->id,
-            'file' => $fileDestiny,
-        ]);
+        if (!Excel::where('file', $fileDestiny)->get()->count()) {
+            Excel::create([
+                'workspace_id' => $workspace->id,
+                'file' => $fileDestiny,
+            ]);
+        }
+
     }
 
     /**
